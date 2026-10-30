@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# AI agent configs
+.agents
+.claude
+.copilot
+gemini.md
+AGENTS.md
+skills-lock.json
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

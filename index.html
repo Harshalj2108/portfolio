@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harshal Joshi</title>
+<meta name="description" content="Harshal Joshi writes Rust and Python. Open the gate to see the projects.">
+<meta name="theme-color" content="#F1EADB">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 70'%3E%3Ccircle cx='26' cy='22' r='13.5' fill='%2314110F'/%3E%3Cpath d='M14.5 15 13 0l11 9.5zM28 9.5 39 0l-1.500 15zM20 68C9 68 12 41 24 33c11-6 23 6 25 22 1 8 4 13-5 13z' fill='%2314110F'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/new-tegomin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/shippori-mincho-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<script>if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('on')</script>
+<script src="scene.js" defer></script>
+</head>
+<body>
+
+<div id="track">
+<div id="stage">
+<div id="camera">
+
+  <img class="room" id="floor" src="art/floor.webp" alt="">
+  <div class="room" id="shadow"></div>
+  <img class="room" id="ceiling" src="art/ceiling.webp" alt="">
+  <img class="room" id="back" src="art/back.webp" alt="">
+  <img class="room" id="left" src="art/side.webp" alt="">
+  <img class="room" id="right" src="art/side.webp" alt="">
+  <img class="room" id="hanging" src="art/hanging.svg" alt="">
+
+  <img class="room" id="leg1" src="art/table-leg.svg" alt="">
+  <img class="room" id="leg2" src="art/table-leg.svg" alt="">
+  <img class="room" id="leg3" src="art/table-leg.svg" alt="">
+  <img class="room" id="leg4" src="art/table-leg.svg" alt="">
+  <img class="room" id="leg5" src="art/table-leg.svg" alt="">
+  <img class="room" id="leg6" src="art/table-leg.svg" alt="">
+  <img class="room" id="edge" src="art/table-edge.svg" alt="">
+
+  <main id="table" aria-label="Projects">
+    <article class="page" tabindex="0" style="--left:4px;--top:60px;--r:-1.5deg;--z:1"><div class="sheet">
+      <h2>Karmyog Jyotish</h2>
+      <p>A Vedic astrology platform with a Swiss Ephemeris calculation engine, a Next.js site and an Android app. It works out 16 divisional charts and offers AI text and voice consultations, paid for through a wallet.</p>
+      <p class="made">Python, Next.js, Android</p>
+      <a href="https://karmyogjyotish.in">Visit karmyogjyotish.in</a>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:314px;--top:200px;--r:1.2deg;--z:3"><div class="sheet">
+      <h2>LeanLayerCLI</h2>
+      <p>A terminal AI agent for local and cloud models. When a session ends it writes notes into an Obsidian vault, then brings them back when a later prompt touches the same ideas.</p>
+      <p class="made">Rust, llama.cpp</p>
+      <a href="https://github.com/Harshalj2108/LeanLayerCLI">View the code</a>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:624px;--top:24px;--r:-0.9deg;--z:5"><div class="sheet">
+      <h2>Eyesaver</h2>
+      <p>A Windows utility that adjusts monitor brightness to match what's on screen. It samples the screen in under a millisecond, and limits how often it writes to external monitors to protect their memory.</p>
+      <p class="made">Rust, Win32</p>
+      <a href="https://github.com/Harshalj2108/eyesaver">View the code</a>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:934px;--top:176px;--r:1.6deg;--z:7"><div class="sheet">
+      <h2>Bookie</h2>
+      <p>An audiobook engine. Kokoro reads the book with a voice for each character, and Dia clones those voices to add laughs, sighs and gasps where the script calls for them.</p>
+      <p class="made">Python, Kokoro, Dia</p>
+      <a href="https://github.com/Harshalj2108/bookie">View the code</a>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:4px;--top:554px;--r:1.4deg;--z:2"><div class="sheet">
+      <h2>TradeSeekho</h2>
+      <p>A synthetic crypto market with GARCH volatility, correlated assets and liquidation cascades, plus paper trading on live prices.</p>
+      <p class="made">Python, JavaScript</p>
+      <a href="https://github.com/Harshalj2108/TradeSeekho">View the code</a>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:314px;--top:694px;--r:-1.3deg;--z:4"><div class="sheet">
+      <h2>TwoView</h2>
+      <p>Captures a Windows screen with DXGI and streams it to an Android client over WebSocket as JPEG frames. The code is private.</p>
+      <p class="made">Rust, Android</p>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:624px;--top:518px;--r:1.7deg;--z:6"><div class="sheet">
+      <h2>Vehicle Behaviour Prediction</h2>
+      <p>Detects and tracks vehicles in traffic video with a custom-trained YOLO model, then predicts turns and spots overtaking from their paths.</p>
+      <p class="made">Python, YOLO</p>
+      <a href="https://github.com/Harshalj2108/VehicleBehaviourPrediction">View the code</a>
+    </div></article>
+    <article class="page" tabindex="0" style="--left:934px;--top:670px;--r:-1.1deg;--z:8"><div class="sheet">
+      <h2>Minesweeper</h2>
+      <p>Minesweeper written in C with SDL2.</p>
+      <p class="made">C, SDL2</p>
+      <a href="https://github.com/Harshalj2108/ICS">View the code</a>
+    </div></article>
+    <img class="thing" src="art/inkstone.svg" alt="" style="left:436px;top:14px;rotate:7deg">
+    <img class="thing" src="art/seal.svg" alt="" style="left:1040px;top:34px">
+    <img class="thing" src="art/cup.svg" alt="" style="left:110px;top:1112px">
+    <img class="thing" src="art/brush.svg" alt="" style="left:660px;top:1090px;rotate:78deg">
+    <div id="dim"></div>
+  </main>
+
+  <div class="gate" id="reveal-left"></div>
+  <div class="gate" id="reveal-right"></div>
+  <div class="gate" id="reveal-top"></div>
+  <img class="gate" id="door-left" src="art/door-left.svg" alt="">
+  <img class="gate" id="door-right" src="art/door-right.svg" alt="">
+  <div class="gate" id="front">
+    <img src="art/gate.svg" alt="">
+    <h1>Harshal Joshi</h1>
+  </div>
+  <img class="gate" id="stone-left" src="art/lantern.svg" alt="">
+  <img class="gate" id="stone-right" src="art/lantern.svg" alt="">
+
+</div>
+<p id="hint">I write Rust and Python. Scroll to open the gate.</p>
+<p id="read">Click a page to read it.</p>
+</div>
+</div>
+
+<svg id="cat" viewBox="0 0 64 70" aria-hidden="true">
+  <path d="M46 67 C60 67 62 52 55 45" fill="none" stroke="#15110E" stroke-width="5" stroke-linecap="round"/>
+  <path d="M20 68 C9 68 12 41 24 33 C35 27 47 39 49 55 C50 63 53 68 44 68Z" fill="#15110E"/>
+  <g id="catHead">
+    <circle cx="26" cy="22" r="13.5" fill="#15110E"/>
+    <path d="M14.5 15 L13 0 L24 9.5ZM28 9.5 L39 0 L37.5 15Z" fill="#15110E"/>
+    <g id="catEyes" fill="#F7BE55"><circle cx="21" cy="21" r="2.3"/><circle cx="31" cy="21" r="2.3"/></g>
+  </g>
+</svg>
+
+</body>
+</html>
