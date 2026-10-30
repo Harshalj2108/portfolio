@@ -1,4 +1,5 @@
-// Run: node check.mjs     the content the site promises is all there, and the palette has no orange
+// Run: node check.mjs          the content the site promises is all there, and the palette has no orange
+//      node check.mjs --launch also fails on leftover TODO(harshal) text
 import { readFileSync, readdirSync } from 'node:fs';
 import assert from 'node:assert/strict';
 
@@ -6,8 +7,11 @@ const read = p => readFileSync(new URL(p, import.meta.url), 'utf8');
 const html = read('index.html');
 
 const PROJECTS = ['Karmyog Jyotish', 'LeanLayerCLI', 'Eyesaver', 'Bookie', 'TradeSeekho', 'TwoView', 'Vehicle Behaviour Prediction', 'Minesweeper'];
-const names = [...html.matchAll(/<h2>([^<]+)</g)].map(m => m[1]);
+const names = [...html.split('id="table"')[1].split('</main>')[0].matchAll(/<h2>([^<]+)</g)].map(m => m[1]);
 assert.deepEqual(names, PROJECTS, 'project pages differ from the agreed list');
+for (const [, src] of html.matchAll(/src="(art\/skills\/[^"]+)"/g)) read(src);
+for (const id of ['about', 'education', 'skills']) assert.ok(html.includes(`id="${id}"`), `the ${id} section is missing`);
+if (process.argv.includes('--launch')) assert.ok(!html.includes('TODO(harshal)'), 'fill in the TODO(harshal) text first');
 
 // Harshal decided these stay off the site.
 for (const hidden of ['IronFlame', 'ProudBardeen', 'web2code']) assert.ok(!html.toLowerCase().includes(hidden.toLowerCase()), `${hidden} must not appear`);
