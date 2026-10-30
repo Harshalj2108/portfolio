@@ -10,7 +10,7 @@ const PROJECTS = ['Karmyog Jyotish', 'LeanLayerCLI', 'Eyesaver', 'Bookie', 'Trad
 const names = [...html.split('id="table"')[1].split('</main>')[0].matchAll(/<h2>([^<]+)</g)].map(m => m[1]);
 assert.deepEqual(names, PROJECTS, 'project pages differ from the agreed list');
 for (const [, src] of html.matchAll(/src="(art\/skills\/[^"]+)"/g)) read(src);
-for (const id of ['about', 'education', 'skills']) assert.ok(html.includes(`id="${id}"`), `the ${id} section is missing`);
+for (const id of ['about', 'education', 'skills', 'profiles', 'contact']) assert.ok(html.includes(`id="${id}"`), `the ${id} section is missing`);
 if (process.argv.includes('--launch')) assert.ok(!html.includes('TODO(harshal)'), 'fill in the TODO(harshal) text first');
 
 // Harshal decided these stay off the site.

@@ -467,6 +467,34 @@ function frame() {
   return svg(W, H, s);
 }
 
+// A shop-style signboard hanging from two nails: a dark plank with a pale inset for the words.
+function signboard(W, H) {
+  const top = 20, T = 14;
+  let s = '';
+  for (const x of [W * .24, W * .76]) s += line(x, 4, x, top + 4, { sw: 2.4, j: .2 }) + dot(x, 4, 4.5, INK);
+  s += `<rect x="9" y="${top + 7}" width="${W - 10}" height="${H - top - 8}" fill="${INK}" fill-opacity=".3"/>`;
+  s += board(2, top, W - 6, H - top - 4, DARK, { sw: 3, j: .4, grain: { along: 'x', n: Math.round(H / 26), knots: false } });
+  s += box(2 + T, top + T, W - 6 - 2 * T, H - top - 4 - 2 * T, { fill: LIGHT, sw: 2.2, j: .3 });
+  s += box(2 + T + 5, top + T + 5, W - 6 - 2 * T - 10, H - top - 4 - 2 * T - 10, { fill: OFF, sw: 1.6, j: .3 });
+  for (const [x, y] of [[9, top + 7], [W - 11, top + 7], [9, H - 11], [W - 11, H - 11]]) s += stud(x, y, 3);
+  return svg(W, H, s);
+}
+
+// A painted ceiling panel: a heavy coffer frame with iron corner plates around a pale board.
+function ceilingPanel(W, H) {
+  const T = 38;
+  let s = board(0, 0, W, T, DARK, { sw: 3, grain: { along: 'x', n: 3, knots: false } }) + board(0, H - T, W, T, DARK, { sw: 3, grain: { along: 'x', n: 3, knots: false } });
+  s += board(0, T, T, H - 2 * T, DARK, { sw: 3, grain: { n: 3, knots: false } }) + board(W - T, T, T, H - 2 * T, DARK, { sw: 3, grain: { n: 3, knots: false } });
+  s += box(T, T, W - 2 * T, H - 2 * T, { fill: LIGHT, sw: 2.6, j: .4 }) + box(T + 8, T + 8, W - 2 * T - 16, H - 2 * T - 16, { fill: EGG, sw: 2.2, j: .4 });
+  s += grain(T + 12, T + 12, W - 2 * T - 24, H - 2 * T - 24, { along: "x", color: LIGHT, op: .3, n: Math.round(H / 44) });
+  s += box(T + 20, T + 20, W - 2 * T - 40, H - 2 * T - 40, { stroke: DARK, sw: 1.6, j: .5 });
+  for (const [x, y, dx, dy] of [[0, 0, 1, 1], [W, 0, -1, 1], [0, H, 1, -1], [W, H, -1, -1]]) {
+    s += poly([[x, y], [x + dx * 62, y], [x + dx * 62, y + dy * 16], [x + dx * 16, y + dy * 16], [x + dx * 16, y + dy * 62], [x, y + dy * 62]], { fill: SLATE, sw: 2.2, j: .3 });
+    s += stud(x + dx * 9, y + dy * 9, 3.6) + stud(x + dx * 42, y + dy * 8, 3) + stud(x + dx * 8, y + dy * 42, 3);
+  }
+  return svg(W, H, s);
+}
+
 const plaque = () => svg(280, 76, box(0, 0, 280, 76, { fill: INK, sw: 0, stroke: 'none' }) + board(6, 6, 268, 64, WOOD, { sw: 2.4, grain: { along: 'x', n: 5, knots: false } }) + stud(20, 20, 3.6) + stud(260, 20, 3.6) + stud(20, 56, 3.6) + stud(260, 56, 3.6));
 
 // A hanging cloth: cord and nail, weighted rods, a patterned brown border and a woven centre. The words are real text.
@@ -568,6 +596,6 @@ const paper = () => {
   return svg(368, 520, s).replace('<svg ', '<svg preserveAspectRatio="none" ');
 };
 
-const out = { gate: gate(), 'door-left': door(false), 'door-right': door(true), lantern: lantern(), back: backWall(), side: sideWall(), ceiling: ceiling(), floor: floor(true), hanging: hanging(), tabletop: tabletop(), 'table-edge': tableEdge(), 'table-leg': tableLeg(), inkstone: inkstone(), brush: brush(), cup: cup(), seal: seal(), paper: paper(), 'floor-plain': floor(false), 'door-wall': doorWall(), 'slide-near': slide(326), 'slide-far': slide(34), 'about-wall': aboutWall(), 'tapestry-large': tapestry(640, 540, 58), 'tapestry-small': tapestry(340, 420, 50), 'door-wall-right': doorWall(500, 900), 'swing-door': swingDoor(), 'skills-wall': aboutWall(false), frame: frame(), plaque: plaque() };
+const out = { gate: gate(), 'door-left': door(false), 'door-right': door(true), lantern: lantern(), back: backWall(), side: sideWall(), ceiling: ceiling(), floor: floor(true), hanging: hanging(), tabletop: tabletop(), 'table-edge': tableEdge(), 'table-leg': tableLeg(), inkstone: inkstone(), brush: brush(), cup: cup(), seal: seal(), paper: paper(), 'floor-plain': floor(false), 'door-wall': doorWall(), 'slide-near': slide(326), 'slide-far': slide(34), 'about-wall': aboutWall(), 'tapestry-large': tapestry(640, 540, 58), 'tapestry-small': tapestry(340, 420, 50), 'door-wall-right': doorWall(500, 900), 'swing-door': swingDoor(), 'skills-wall': aboutWall(false), frame: frame(), plaque: plaque(), 'ceiling-wide': ceilingPanel(720, 420), 'ceiling-tall': ceilingPanel(420, 560), 'sign-tall': signboard(320, 340), 'sign-wide': signboard(380, 160) };
 for (const [name, text] of Object.entries(out)) writeFileSync(new URL(`../art/${name}.svg`, import.meta.url), text);
 console.log(Object.entries(out).map(([n, t]) => `${n} ${(t.length / 1024).toFixed(0)}KB`).join(', '));

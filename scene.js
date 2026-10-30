@@ -32,7 +32,7 @@ else {
   // The second room is turned to face the left wall's doorway, which is at world x = -800, z = -850.
   const fromRoom2 = (x, y, z, pitch) => [-800 + z, y, -850 - x, pitch, -90];
   // The third room faces the same way as the world, with its entrance at the second room's right-hand door.
-  const fromRoom3 = (x, y, z) => [-1800 + x, y, -1650 + z, 0, 0];
+  const fromRoom3 = (x, y, z, pitch = 0, yaw = 0) => [-1800 + x, y, -1650 + z, pitch, yaw];
   const place = (id, s) => { $(id).style.transform = s; };
   const canHover = matchMedia('(hover: hover)').matches;
 
@@ -78,6 +78,16 @@ else {
     // A wide screen frames the whole skills wall; a narrow one frames a few columns and travels along it.
     const skillsK = narrow ? Math.min(vw * .94 / 300, vh * .9 / 560) : Math.min(vw * .94 / 1180, vh * .9 / 560);
     const skillsStop = x => fromRoom3(x, -339, WALL + PERSPECTIVE / skillsK);
+    // The profiles hang on the third room's left wall, centred along it; the camera backs away until they fit.
+    const profiles = $('profiles'), profilesW = profiles.offsetWidth;
+    place('profiles', `translate3d(-796px, ${narrow ? -600 : -590}px, ${-850 + profilesW / 2}px) rotateY(90deg)`);
+    const profilesK = narrow ? Math.min(vw * .92 / 380, vh * .88 / 570) : Math.min(vw * .92 / 1080, vh * .88 / 450);
+    const profilesStop = fromRoom3(-796 + PERSPECTIVE / profilesK, narrow ? -327 : -392, -850, 0, -90);
+    // From there the camera tilts straight up, sinking towards the floor until the ceiling panel fits. On a very
+    // short screen the floor stops it first, so the panel itself shrinks to fit. It's turned to read from the left-facing view.
+    const contact = $('contact'), panelW = contact.offsetWidth, panelH = contact.offsetHeight;
+    const panelK = Math.min(vw * .92 / panelW, vh * .86 / panelH), toCeiling = Math.min(PERSPECTIVE / panelK, 740), panelFit = panelK * toCeiling / PERSPECTIVE;
+    place('contact', `translate3d(${panelH * panelFit / 2}px, -798px, ${-850 + panelW * panelFit / 2}px) rotateY(90deg) rotateX(-90deg) scale(${panelFit})`);
     // Each row: how much scrolling leads to this position (in screen heights), the position, and whether the camera rests there.
     const path = [
       [0, [0, y0, PERSPECTIVE / fit, 0, 0], 'gate'],
@@ -98,13 +108,17 @@ else {
       [.6, facingDoor, 'swung', true],
       [.5, fromRoom3(0, -345, -30), 'passed2'],
       [.55, skillsStop(narrow ? -440 : 0), 'skills', true],
-      ...(narrow ? [[1.6, skillsStop(440), 'skillsEnd', true]] : []),
+      ...(narrow ? [[1.6, skillsStop(440), 'skillsFar', true]] : []),
+      [.5, skillsStop(narrow ? 440 : 0), 'skillsEnd', true],
+      [.8, profilesStop, 'profiles', true],
+      [.5, profilesStop, 'profilesEnd', true],
+      [.95, fromRoom3(0, -798 + toCeiling, -850, -90, -90), 'contact', true],
     ];
     const total = path.reduce((sum, row) => sum + row[0], 0);
     let at = 0;
     keys = path.map(([dist, pos, name, rest]) => { at += dist / total; T[name] = at; return [at, ...pos, rest]; });
     // The camera is still between these pairs, so the words on the wall can render at their true size.
-    T.rests = narrow ? [[T.read, T.readAbout], [T.edu, T.eduEnd], [1, 1]] : [[T.read, T.readAbout], [T.skills, 1]];
+    T.rests = [[T.read, T.readAbout], ...(narrow ? [[T.edu, T.eduEnd]] : []), [narrow ? T.skillsFar : T.skills, T.skillsEnd], [T.profiles, T.profilesEnd], [1, 1]];
     T.readEnd = narrow ? T.eduEnd : T.readAbout;
     sceneScroll = Math.round(vh * total);
     $('track').style.height = sceneScroll + vh + 'px';
@@ -128,7 +142,7 @@ else {
 
   const gateParts = [...document.querySelectorAll('.gate')];
   const firstRoom = [...document.querySelectorAll('.one')];
-  const tapestries = [...document.querySelectorAll('.tapestry, #skills')];
+  const tapestries = [...document.querySelectorAll('.tapestry, #skills, #profiles')];
   const upperRoom = ['ceiling', 'back', 'left', 'right', 'hanging', 'swing'].map($);
   let gateShown = true, oneShown = true, roomShown = true, twoShown = true, threeShown = true, sharp = false;
   const show = (els, on) => { for (const el of els) el.style.visibility = on ? '' : 'hidden'; };
@@ -156,7 +170,7 @@ else {
     $('hint').style.opacity = 1 - ease(prog, 0, T.doors * .2);
     // Whatever is behind a wall still costs the graphics card, so each part only exists while it can be seen.
     // The second room appears while the camera rests at the tapestries, where preparing it can't show as a stutter.
-    const wantGate = z > -40, wantOne = prog < T.inside, wantTwo = prog >= T.read && prog < T.passed2, wantThree = prog >= T.tableEnd;
+    const wantGate = z > -40, wantOne = prog < T.inside, wantTwo = prog >= T.read && prog < T.passed2, wantThree = prog >= T.table;
     const wantRoom = prog < T.rise + (T.table - T.rise) * .56 || prog > T.tableEnd;
     if (wantGate !== gateShown) show(gateParts, gateShown = wantGate);
     if (wantOne !== oneShown) show(firstRoom, oneShown = wantOne);
@@ -219,6 +233,8 @@ else {
     if (page && e.target.matches(':focus-visible')) { scrollTo(0, Math.ceil(T.table * sceneScroll)); setOpen(page); }
     else if (!page) setOpen(null);
     if (e.target.closest?.('#about') && e.target.matches(':focus-visible')) scrollTo(0, T.read * sceneScroll);
+    if (e.target.closest?.('#profiles') && e.target.matches(':focus-visible')) scrollTo(0, Math.ceil(T.profiles * sceneScroll));
+    if (e.target.closest?.('#contact') && e.target.matches(':focus-visible')) scrollTo(0, sceneScroll);
   });
   addEventListener('keydown', e => {
     if (e.key === 'Escape') setOpen(null);
@@ -240,7 +256,7 @@ else {
   async function warm() {
     measure();
     const nextFrame = () => new Promise(requestAnimationFrame);
-    for (const at of [T.doors * .5, T.through, T.read, (T.readEnd + T.turned) / 2, T.turned, T.slid, T.passed, T.inside, T.rise, T.table, T.upright, T.facing, T.swung, T.passed2, 1]) {
+    for (const at of [T.doors * .5, T.through, T.read, (T.readEnd + T.turned) / 2, T.turned, T.slid, T.passed, T.inside, T.rise, T.table, T.upright, (T.upright + T.facing) / 2, T.facing, T.swung, T.passed2, T.skills, (T.skillsEnd + T.profiles) / 2, T.profiles, (T.profilesEnd + 1) / 2, 1]) {
       smooth = at * sceneScroll;
       draw();
       await nextFrame(); await nextFrame(); await nextFrame();

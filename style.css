@@ -139,3 +139,37 @@ h2 { margin: 0 0 .5rem; font: 400 clamp(1.5rem, 2.5vw, 2.1rem)/1.15 "New Tegomin
 /* Hides the camera visiting every position at load. Almost opaque, because a fully opaque cover would stop the browser preparing what is behind it. */
 .on #cover { position: fixed; inset: 0; z-index: 4; background: var(--egg); opacity: .995; pointer-events: none; transition: opacity .7s ease; }
 .on.ready #cover { opacity: 0; }
+
+/* The contact panel on the ceiling. scene.js places it, because its size depends on the screen. */
+.on #contact { width: 720px; height: 420px; padding: 74px 88px 0; font-size: 26px; line-height: 1.38; }
+.on #contact h2 { font-size: 58px; margin-bottom: .22em; }
+.on #contact:not(.sharp) { pointer-events: none; }
+@media (max-width: 899px) { .on #contact { width: 420px; height: 560px; padding: 76px 62px 0; font-size: 23px; } .on #contact h2 { font-size: 50px; } .on #contact a { white-space: nowrap; font-size: .94em; } }
+
+/* The profiles wall: three hanging signboards under a plaque. On a narrow screen they stack as wide, short boards. */
+#profiles { width: min(40rem, 100vw - 16px); margin: 0 auto 2rem; text-align: center; }
+#profiles ul { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.profile { display: flex; align-items: center; gap: .9rem; padding: 1rem 1.25rem; background: var(--off); border: 3px solid var(--ink); font-weight: 500; text-decoration: none; text-align: left; }
+.profile img { width: 44px; height: 44px; }
+.profile strong { font: 400 1.5rem/1.1 "New Tegomin", serif; }
+.profile span { margin-left: auto; color: var(--wood); overflow-wrap: anywhere; }
+.on #profiles { width: 1080px; height: 406px; margin: 0; text-rendering: geometricPrecision; }
+.on #profiles.sharp { will-change: auto; }
+.on #profiles:not(.sharp) { pointer-events: none; }
+.on #profiles h2 { display: grid; place-items: center; width: 240px; height: 56px; margin: 0 auto 10px; background: url(art/plaque.webp) 0 0 / 100% 100%; color: var(--off); font-size: 33px; text-shadow: 1px 1px 0 var(--ink); }
+.on #profiles ul { grid-template-columns: repeat(3, 320px); justify-content: space-between; gap: 10px; }
+.on .profile { flex-direction: column; justify-content: flex-start; gap: 8px; width: 320px; height: 340px; padding: 66px 44px 0; background: url(art/sign-tall.webp) 0 0 / 100% 100%; border: 0; text-align: center; transform-origin: 50% 4px; }
+.on .profile img { width: 104px; height: 104px; margin-bottom: 6px; }
+.on .profile strong { font-size: 38px; }
+.on .profile span { margin: 0; font-size: 19px; line-height: 1.25; overflow-wrap: normal; }
+.on a.profile[href]:hover { animation: swing 1.3s var(--settle) both; color: var(--ink); }
+.on a.profile[href]:hover strong { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.on a.profile:not([href]) { cursor: default; }
+@media (max-width: 899px) {
+  .on #profiles { width: 380px; height: 546px; }
+  .on #profiles ul { grid-template-columns: 380px; }
+  .on .profile { display: grid; grid-template-columns: 70px 1fr; align-content: center; column-gap: 18px; row-gap: 2px; width: 380px; height: 160px; padding: 26px 34px 12px; background-image: url(art/sign-wide.webp); text-align: left; }
+  .on .profile img { grid-row: span 2; width: 70px; height: 70px; margin: 0; }
+  .on .profile strong { font-size: 32px; align-self: end; }
+  .on .profile span { font-size: 16.5px; line-height: 1.15; align-self: start; }
+}

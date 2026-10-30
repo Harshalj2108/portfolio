@@ -9,7 +9,7 @@ const art = name => new URL(`../art/${name}`, import.meta.url);
 const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new' });
 const page = await browser.newPage();
 
-for (const name of ['floor', 'floor-plain', 'ceiling', 'back', 'about-wall', 'side', 'door-wall', 'slide-near', 'slide-far', 'tabletop', 'tapestry-large', 'tapestry-small', 'door-wall-right', 'swing-door', 'skills-wall', 'frame', 'plaque']) {
+for (const name of ['floor', 'floor-plain', 'ceiling', 'back', 'about-wall', 'side', 'door-wall', 'slide-near', 'slide-far', 'tabletop', 'tapestry-large', 'tapestry-small', 'door-wall-right', 'swing-door', 'skills-wall', 'frame', 'plaque', 'ceiling-wide', 'ceiling-tall', 'sign-tall', 'sign-wide']) {
   const svg = readFileSync(art(`${name}.svg`), 'utf8');
   const [, w, h] = svg.match(/viewBox="0 0 (\d+) (\d+)"/);
   await page.setViewport({ width: +w, height: +h, deviceScaleFactor: 1.5 });
