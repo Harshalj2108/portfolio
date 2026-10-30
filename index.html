@@ -15,16 +15,54 @@
 </head>
 <body>
 
+<div id="cover"></div>
 <div id="track">
 <div id="stage">
 <div id="camera">
 
+  <div class="gate" id="reveal-left"></div>
+  <div class="gate" id="reveal-right"></div>
+  <div class="gate" id="reveal-top"></div>
+  <img class="gate" id="door-left" src="art/door-left.svg" alt="">
+  <img class="gate" id="door-right" src="art/door-right.svg" alt="">
+  <div class="gate" id="front">
+    <img src="art/gate.svg" alt="">
+    <h1>Harshal Joshi</h1>
+  </div>
+  <img class="gate" id="stone-left" src="art/lantern.svg" alt="">
+  <img class="gate" id="stone-right" src="art/lantern.svg" alt="">
+
+  <img class="room one" id="floor1" src="art/floor-plain.webp" alt="">
+  <img class="room one" id="ceiling1" src="art/ceiling.webp" alt="">
+  <img class="room one" id="back1" src="art/about-wall.webp" alt="">
+  <img class="room one" id="left1" src="art/door-wall.webp" alt="">
+  <img class="room one" id="right1" src="art/side.webp" alt="">
+  <img class="room one" id="hanging1" src="art/hanging.svg" alt="">
+  <img class="room one" id="slide-near" src="art/slide-near.webp" alt="">
+  <img class="room one" id="slide-far" src="art/slide-far.webp" alt="">
+
+  <!-- TODO(harshal): this is drafted from your projects; put it in your own words. -->
+  <section class="one tapestry" id="about">
+    <img src="art/tapestry-large.webp" alt="">
+    <h2>About me</h2>
+    <p>I write Rust and Python. I've built a terminal AI agent that keeps its own notes, a Windows utility that matches brightness to what's on screen, and an audiobook engine. My pull requests have been merged into Apache arrow-rs and shadPS4.</p>
+    <a href="https://github.com/Harshalj2108">See my GitHub</a>
+  </section>
+  <section class="one tapestry" id="education">
+    <img src="art/tapestry-small.webp" alt="">
+    <h2>Education</h2>
+    <p>TODO(harshal): your degree, college and years.</p>
+  </section>
+
+  <!-- The second room is the first room's layout turned to face the left wall's doorway. -->
+  <div id="room2">
   <img class="room" id="floor" src="art/floor.webp" alt="">
   <div class="room" id="shadow"></div>
   <img class="room" id="ceiling" src="art/ceiling.webp" alt="">
   <img class="room" id="back" src="art/back.webp" alt="">
   <img class="room" id="left" src="art/side.webp" alt="">
-  <img class="room" id="right" src="art/side.webp" alt="">
+  <img class="room" id="right" src="art/door-wall-right.webp" alt="">
+  <img class="room" id="swing" src="art/swing-door.webp" alt="">
   <img class="room" id="hanging" src="art/hanging.svg" alt="">
 
   <img class="room" id="leg1" src="art/table-leg.svg" alt="">
@@ -89,18 +127,57 @@
     <img class="thing" src="art/brush.svg" alt="" style="left:660px;top:1090px;rotate:78deg">
     <div id="dim"></div>
   </main>
-
-  <div class="gate" id="reveal-left"></div>
-  <div class="gate" id="reveal-right"></div>
-  <div class="gate" id="reveal-top"></div>
-  <img class="gate" id="door-left" src="art/door-left.svg" alt="">
-  <img class="gate" id="door-right" src="art/door-right.svg" alt="">
-  <div class="gate" id="front">
-    <img src="art/gate.svg" alt="">
-    <h1>Harshal Joshi</h1>
   </div>
-  <img class="gate" id="stone-left" src="art/lantern.svg" alt="">
-  <img class="gate" id="stone-right" src="art/lantern.svg" alt="">
+
+  <!-- The third room lines up with the world again: through the second room's right-hand door, facing the skills wall. -->
+  <div id="room3">
+    <img class="room" id="floor3" src="art/floor-plain.webp" alt="">
+    <img class="room" id="ceiling3" src="art/ceiling.webp" alt="">
+    <img class="room" id="back3" src="art/skills-wall.webp" alt="">
+    <img class="room" id="left3" src="art/side.webp" alt="">
+    <img class="room" id="right3" src="art/side.webp" alt="">
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul>
+        <li><img src="art/skills/javascript.svg" alt=""><span>JavaScript</span></li>
+        <li><img src="art/skills/typescript.svg" alt=""><span>TypeScript</span></li>
+        <li><img src="art/skills/python.svg" alt=""><span>Python</span></li>
+        <li><img src="art/skills/cplusplus.svg" alt=""><span>C/C++</span></li>
+        <li><img src="art/skills/rust.svg" alt=""><span>Rust</span></li>
+        <li><img src="art/skills/openjdk.svg" alt=""><span>Java</span></li>
+        <li><img src="art/skills/html5.svg" alt=""><span>HTML</span></li>
+        <li><img src="art/skills/css3.svg" alt=""><span>CSS</span></li>
+        <li><img src="art/skills/react.svg" alt=""><span>React</span></li>
+        <li><img src="art/skills/nextdotjs.svg" alt=""><span>Next.js</span></li>
+        <li><img src="art/skills/nodedotjs.svg" alt=""><span>Node.js</span></li>
+        <li><img src="art/skills/tailwindcss.svg" alt=""><span>Tailwind CSS</span></li>
+        <li><img src="art/skills/framer.svg" alt=""><span>Framer Motion</span></li>
+        <li><img src="art/skills/zod.svg" alt=""><span>Zod</span></li>
+        <li><img src="art/skills/jsonwebtokens.svg" alt=""><span>JWT</span></li>
+        <li><img src="art/skills/fastapi.svg" alt=""><span>FastAPI</span></li>
+        <li><img src="art/skills/flask.svg" alt=""><span>Flask</span></li>
+        <li><img src="art/skills/gunicorn.svg" alt=""><span>Gunicorn</span></li>
+        <li><img src="art/skills/firebase.svg" alt=""><span>Firebase</span></li>
+        <li><img src="art/skills/mongodb.svg" alt=""><span>MongoDB</span></li>
+        <li><img src="art/skills/pytorch.svg" alt=""><span>PyTorch</span></li>
+        <li><img src="art/skills/huggingface.svg" alt=""><span>Hugging Face</span></li>
+        <li><img src="art/skills/onnx.svg" alt=""><span>ONNX</span></li>
+        <li><img src="art/skills/opencv.svg" alt=""><span>OpenCV</span></li>
+        <li><img src="art/skills/numpy.svg" alt=""><span>NumPy</span></li>
+        <li><img src="art/skills/scipy.svg" alt=""><span>SciPy</span></li>
+        <li><img src="art/skills/pandas.svg" alt=""><span>Pandas</span></li>
+        <li><img src="art/skills/ollama.svg" alt=""><span>Ollama</span></li>
+        <li><img src="art/skills/googlegemini.svg" alt=""><span>Gemini</span></li>
+        <li><img src="art/skills/docker.svg" alt=""><span>Docker</span></li>
+        <li><img src="art/skills/git.svg" alt=""><span>Git</span></li>
+        <li><img src="art/skills/github.svg" alt=""><span>GitHub</span></li>
+        <li><img src="art/skills/githubactions.svg" alt=""><span>GitHub Actions</span></li>
+        <li><img src="art/skills/android.svg" alt=""><span>Android</span></li>
+        <li><img src="art/skills/gradle.svg" alt=""><span>Gradle</span></li>
+        <li><img src="art/skills/obsidian.svg" alt=""><span>Obsidian</span></li>
+      </ul>
+    </section>
+  </div>
 
 </div>
 <p id="hint">I write Rust and Python. Scroll to open the gate.</p>

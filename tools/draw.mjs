@@ -386,7 +386,115 @@ function cushion(cx, cy, w, h) {
   return s;
 }
 
-function floor() {
+// The first room's left wall: plaster either side of a doorway. The doorway is cut out, so the next room shows through.
+function doorWall(X0 = 490, X1 = 1210) {
+  const W = 1700, H = 800, Y0 = 172, Y1 = 790;
+  let s = `<path fill="${EGG}" fill-rule="evenodd" d="M0 0H${W}V${H}H0ZM${X0} ${Y0}H${X1}V${Y1}H${X0}Z"/>`;
+  for (const [a, b] of [[28, X0 - 28], [X1 + 28, W - 28]]) {
+    s += box(a, Y0, b - a, H - Y0, { fill: EGG, sw: 2.2 });
+    for (let i = 0; i < 9; i++) { const x = rnd(a + 40, b - 40), y = rnd(Y0 + 20, H - 40), w = rnd(20, 80); s += `<path d="M${f(x - w)} ${f(y)}Q${f(x)} ${f(y - 3)} ${f(x + w)} ${f(y)}" fill="none" stroke="${LIGHT}" stroke-opacity=".5" stroke-width="1.5"/>`; }
+  }
+  s += box(0, 0, W, 130, { fill: EGG, sw: 2.8 });
+  for (let x = 16; x < W; x += 40) s += line(x, 0, x, 128, { stroke: DARK, sw: 3, j: .2 });
+  s += line(0, 44, W, 44, { stroke: DARK, sw: 3, j: .2 }) + line(0, 88, W, 88, { stroke: DARK, sw: 3, j: .2 });
+  s += board(0, 130, W, 42, DARK, { sw: 3, grain: { along: 'x', n: 4, knots: false } });
+  for (const x of [0, X0 - 28, X1, W - 28]) s += board(x, 0, 28, H, DARK, { sw: 3 });
+  s += box(0, Y1, W, H - Y1, { fill: DARK, sw: 2, j: .2 });
+  return svg(W, H, s);
+}
+
+// A sliding door panel with the round recess you'd put a finger in, on the edge away from the meeting edge.
+function slide(pullX) {
+  const W = 360, H = 618;
+  let s = shoji(0, 0, W, H);
+  s += dot(pullX, H * .52, 17, DARK, { stroke: INK, strokeWidth: 2.6 }) + dot(pullX, H * .52, 9, INK);
+  return svg(W, H, s);
+}
+
+// The wall facing the gate: plaster for the tapestries to hang on, a narrow shoji each side, a low stand with a vase.
+function aboutWall(stand = true) {
+  const W = 1600, H = 800;
+  let s = box(0, 0, W, H, { fill: EGG, sw: 0, stroke: 'none' });
+  s += shoji(14, 172, 134, H - 182) + shoji(W - 148, 172, 134, H - 182);
+  s += box(148, 172, W - 296, H - 182, { fill: EGG, sw: 2.4 });
+  for (let i = 0; i < 26; i++) { const x = rnd(190, W - 190), y = rnd(190, 770), w = rnd(30, 130); s += `<path d="M${f(x - w)} ${f(y)}Q${f(x)} ${f(y - 4)} ${f(x + w)} ${f(y)}" fill="none" stroke="${LIGHT}" stroke-opacity=".45" stroke-width="1.5"/>`; }
+  s += box(0, 0, W, 130, { fill: EGG, sw: 2.8 });
+  for (let x = 16; x < W; x += 40) s += line(x, 0, x, 128, { stroke: DARK, sw: 3, j: .2 });
+  s += line(0, 44, W, 44, { stroke: DARK, sw: 3, j: .2 }) + line(0, 88, W, 88, { stroke: DARK, sw: 3, j: .2 });
+  s += board(0, 130, W, 42, DARK, { sw: 3, grain: { along: 'x', n: 4, knots: false } });
+  for (const x of [0, 148, W - 176, W - 28]) s += board(x, 0, 28, H, DARK, { sw: 3 });
+  s += box(0, H - 10, W, 10, { fill: DARK, sw: 2, j: .2 });
+  if (!stand) return svg(W, H, s);
+  // Low stand and vase, under the smaller tapestry.
+  const c = 1140;
+  s += board(c - 110, 742, 220, 16, DARK, { sw: 2.6, grain: { along: 'x', n: 2, knots: false } }) + box(c - 96, 758, 18, 32, { fill: DARK, sw: 2.2, j: .3 }) + box(c + 78, 758, 18, 32, { fill: DARK, sw: 2.2, j: .3 });
+  s += `<path d="M${c} 742C${c - 28} 742 ${c - 36} 696 ${c - 16} 674L${c - 11} 650H${c + 11}L${c + 16} 674C${c + 36} 696 ${c + 28} 742 ${c} 742Z" fill="${SLATE}" stroke="${INK}" stroke-width="2.8"/>`;
+  s += `<path d="M${c} 650C${c - 4} 630 ${c + 16} 612 ${c - 8} 590M${c + 2} 626C${c + 22} 616 ${c + 28} 606 ${c + 46} 600" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`;
+  return svg(W, H, s);
+}
+
+// The single door that swings open: stiles and rail around boards, a lattice light above, iron strap hinges and a ring.
+function swingDoor() {
+  const W = 400, H = 618;
+  let s = '';
+  for (let i = 0; i < 4; i++) s += board(i * W / 4, 0, W / 4, H, WOOD, { sw: 2.2, j: .4 });
+  s += box(30, 30, W - 60, 170, { fill: DARK, sw: 2.4 }) + box(38, 38, W - 76, 154, { fill: EGG, sw: 2, j: .3 });
+  for (let i = 1; i < 6; i++) s += line(38 + (W - 76) * i / 6, 38, 38 + (W - 76) * i / 6, 192, { stroke: DARK, sw: 3, j: .2 });
+  for (let i = 1; i < 4; i++) s += line(38, 38 + 154 * i / 4, W - 38, 38 + 154 * i / 4, { stroke: DARK, sw: 3, j: .2 });
+  for (const y of [212, 560]) s += board(-2, y, W + 4, 34, DARK, { sw: 2.6, j: .3, grain: { along: 'x', n: 3, knots: false } });
+  s += box(0, 0, 14, H, { fill: INK, sw: 0, stroke: 'none' }) + box(W - 10, 0, 10, H, { fill: INK, sw: 0, stroke: 'none' });
+  for (const y of [90, 520]) {
+    s += poly([[0, y], [140, y + 7], [162, y + 15], [140, y + 23], [0, y + 30]], { fill: SLATE, sw: 2.2, j: .3 });
+    for (const x of [24, 66, 108]) s += stud(x, y + 15, 4);
+  }
+  const px = W - 52, py = 340;
+  for (let i = 0; i < 8; i++) { const a = i * .785; s += dot(px + Math.cos(a) * 15, py + Math.sin(a) * 15, 7, SLATE, { stroke: INK, strokeWidth: 1.6 }); }
+  s += dot(px, py, 15, GREY, { stroke: INK, strokeWidth: 2 }) + dot(px, py, 5, INK);
+  s += `<path d="M${px - 20} ${py + 2}A20 28 0 0 0 ${px + 20} ${py + 2}" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M${px - 20} ${py + 2}A20 28 0 0 0 ${px + 20} ${py + 2}" fill="none" stroke="${PALE}" stroke-width="1.8"/>`;
+  return svg(W, H, s);
+}
+
+// One small picture frame: a nail, a dark mitred moulding, a beige mat and a pale centre for the logo.
+function frame() {
+  const W = 150, H = 160, T = 16, top = 14;
+  let s = dot(W / 2, 6, 4, INK) + line(W / 2, 6, 34, top + 2, { sw: 1.6, j: .1 }) + line(W / 2, 6, W - 34, top + 2, { sw: 1.6, j: .1 });
+  s += `<rect x="9" y="${top + 6}" width="${W - 14}" height="${H - top - 8}" fill="${INK}" fill-opacity=".3"/>`;
+  s += box(4, top, W - 8, H - top - 6, { fill: DARK, sw: 2.6, j: .3 });
+  s += grain(7, top + 2, W - 14, T - 3, { along: 'x', n: 2, knots: false, color: '#000' }) + grain(7, H - 6 - T, W - 14, T - 3, { along: 'x', n: 2, knots: false, color: '#000' });
+  for (const [x, y, a, b] of [[4, top, 4 + T, top + T], [W - 4, top, W - 4 - T, top + T], [4, H - 6, 4 + T, H - 6 - T], [W - 4, H - 6, W - 4 - T, H - 6 - T]]) s += line(x, y, a, b, { sw: 1.5, j: .1 });
+  s += box(4 + T, top + T, W - 8 - 2 * T, H - top - 6 - 2 * T, { fill: BEIGE, sw: 2, j: .2 });
+  s += box(4 + T + 5, top + T + 5, W - 8 - 2 * T - 10, H - top - 6 - 2 * T - 10, { fill: OFF, sw: 1.4, j: .2 });
+  return svg(W, H, s);
+}
+
+const plaque = () => svg(280, 76, box(0, 0, 280, 76, { fill: INK, sw: 0, stroke: 'none' }) + board(6, 6, 268, 64, WOOD, { sw: 2.4, grain: { along: 'x', n: 5, knots: false } }) + stud(20, 20, 3.6) + stud(260, 20, 3.6) + stud(20, 56, 3.6) + stud(260, 56, 3.6));
+
+// A hanging cloth: cord and nail, weighted rods, a patterned brown border and a woven centre. The words are real text.
+function tapestry(W, H, inset) {
+  const top = 40, bottom = H - 38, m = 24;
+  let s = line(W / 2, 8, m, top, { sw: 2.4, j: .3 }) + line(W / 2, 8, W - m, top, { sw: 2.4, j: .3 }) + dot(W / 2, 8, 6, INK);
+  s += `<rect x="${m + 7}" y="${top + 12}" width="${W - 2 * m}" height="${bottom - top - 8}" fill="${INK}" fill-opacity=".28"/>`;
+  s += box(m, top, W - 2 * m, bottom - top, { fill: WOOD, sw: 2.8, j: .5 });
+  // Hemp-leaf pattern on the border, the traditional six-pointed star repeat.
+  const t = 44, r = t * .866;
+  let d = '';
+  for (let row = 0; row * r < bottom - top + r; row++) for (let col = -1; col * t < W; col++) {
+    const x = m + col * t + (row % 2 ? t / 2 : 0), y = top + row * r, px = x + t / 2, py = y + r / 3;
+    d += `M${f(x)} ${f(y)}L${f(x + t)} ${f(y)}L${f(px)} ${f(y + r)}Z`;
+    d += `M${f(px)} ${f(py)}L${f(x)} ${f(y)}M${f(px)} ${f(py)}L${f(x + t)} ${f(y)}M${f(px)} ${f(py)}L${f(px)} ${f(y + r)}`;
+  }
+  s += `<defs><clipPath id="c"><rect x="${m + 3}" y="${top + 3}" width="${W - 2 * m - 6}" height="${bottom - top - 6}"/></clipPath></defs><path d="${d}" clip-path="url(#c)" fill="none" stroke="${DARK}" stroke-width="1.2"/>`;
+  s += box(inset - 8, inset + 14, W - 2 * inset + 16, H - 2 * inset - 12, { fill: BEIGE, sw: 2.2, j: .4 });
+  const ix = inset, iy = inset + 22, iw = W - 2 * inset, ih = H - 2 * inset - 28;
+  s += box(ix, iy, iw, ih, { fill: OFF, sw: 2, j: .4 });
+  let weave = '';
+  for (let y = iy + 7; y < iy + ih; y += 9) weave += `M${f(ix + 2)} ${f(y)}H${f(ix + iw - 2)}`;
+  s += `<path d="${weave}" fill="none" stroke="${BEIGE}" stroke-opacity=".5" stroke-width="1"/>`;
+  for (const y of [top, bottom]) s += box(m - 12, y - 9, W - 2 * m + 24, 18, { fill: DARK, sw: 2.6, j: .3 }) + dot(m - 14, y, 11, INK) + dot(W - m + 14, y, 11, INK);
+  return svg(W, H, s);
+}
+
+function floor(cushions) {
   const W = 1600, D = 1700;
   let s = box(-2, -2, W + 4, D + 4, { fill: LIGHT, sw: 0, stroke: 'none' });
   for (const [x, y, w, h] of [[0, 0, 800, 400], [800, 0, 800, 400], [0, 400, 400, 800], [400, 400, 400, 800], [800, 400, 400, 800], [1200, 400, 400, 800], [0, 1200, 800, 400], [800, 1200, 800, 400]]) s += mat(x, y, w, h);
@@ -396,7 +504,7 @@ function floor() {
     const x = 980 + c * 118 + r * 34, y = 120 + r * 118;
     s += poly([[x, y], [x + 104, y], [x + 104 + 28, y + 104], [x + 28, y + 104]], { fill: OFF, stroke: 'none', sw: 0, j: .3 }).replace('fill="#FAF8F2"', 'fill="#FAF8F2" fill-opacity=".34"');
   }
-  s += cushion(420, 700, 200, 216) + cushion(1180, 700, 200, 216);
+  if (cushions) s += cushion(420, 700, 200, 216) + cushion(1180, 700, 200, 216);
   return svg(W, D, s);
 }
 
@@ -460,6 +568,6 @@ const paper = () => {
   return svg(368, 520, s).replace('<svg ', '<svg preserveAspectRatio="none" ');
 };
 
-const out = { gate: gate(), 'door-left': door(false), 'door-right': door(true), lantern: lantern(), back: backWall(), side: sideWall(), ceiling: ceiling(), floor: floor(), hanging: hanging(), tabletop: tabletop(), 'table-edge': tableEdge(), 'table-leg': tableLeg(), inkstone: inkstone(), brush: brush(), cup: cup(), seal: seal(), paper: paper() };
+const out = { gate: gate(), 'door-left': door(false), 'door-right': door(true), lantern: lantern(), back: backWall(), side: sideWall(), ceiling: ceiling(), floor: floor(true), hanging: hanging(), tabletop: tabletop(), 'table-edge': tableEdge(), 'table-leg': tableLeg(), inkstone: inkstone(), brush: brush(), cup: cup(), seal: seal(), paper: paper(), 'floor-plain': floor(false), 'door-wall': doorWall(), 'slide-near': slide(326), 'slide-far': slide(34), 'about-wall': aboutWall(), 'tapestry-large': tapestry(640, 540, 58), 'tapestry-small': tapestry(340, 420, 50), 'door-wall-right': doorWall(500, 900), 'swing-door': swingDoor(), 'skills-wall': aboutWall(false), frame: frame(), plaque: plaque() };
 for (const [name, text] of Object.entries(out)) writeFileSync(new URL(`../art/${name}.svg`, import.meta.url), text);
 console.log(Object.entries(out).map(([n, t]) => `${n} ${(t.length / 1024).toFixed(0)}KB`).join(', '));
