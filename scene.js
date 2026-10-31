@@ -6,7 +6,7 @@ const ease = (t, a, b) => { const x = clamp((t - a) / (b - a), 0, 1); return x *
 
 const pointer = { x: -9999, y: -9999, sx: 0, sy: 0 };
 
-/* The cat only turns its head: enough to feel watched, not enough to be a character. */
+/* The cat turns its head to watch the cursor, and swats at it when it comes too close. */
 const cat = { tilt: 0, ex: 0, blink: 3 };
 function drawCat(t) {
   const r = $('cat').getBoundingClientRect();
@@ -21,7 +21,14 @@ function drawCat(t) {
   $('catEyes').setAttribute('visibility', t > cat.blink - .12 ? 'hidden' : 'visible');
 }
 
-function track(e) { pointer.x = e.clientX; pointer.y = e.clientY; if (still) drawCat(performance.now() / 1000); }
+function track(e) {
+  pointer.x = e.clientX; pointer.y = e.clientY;
+  if (still) return drawCat(performance.now() / 1000);
+  const r = $('cat').getBoundingClientRect();
+  if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) $('catPaw').classList.add('swat');
+}
+// Clearing the class lets a cursor that keeps moving on the cat set off another swat.
+$('catPaw').addEventListener('animationend', () => $('catPaw').classList.remove('swat'));
 addEventListener('pointermove', track, { passive: true });
 addEventListener('pointerdown', track, { passive: true });
 document.documentElement.addEventListener('pointerleave', () => { pointer.x = pointer.y = -9999; if (still) drawCat(performance.now() / 1000); });
@@ -70,6 +77,8 @@ else {
     // The wall is 1696 away from the entrance; each stop backs off until its tapestry fits the screen.
     const WALL = -1695, narrow = vw < 900, wallStop = (x, y, k) => [x, y, WALL + PERSPECTIVE / k, 0, 0];
     const about = narrow ? wallStop(-210, -345, Math.min(vw * .94 / 640, vh * .85 / 560)) : wallStop(-10, -345, Math.min(vw * .94 / 1080, vh * .9 / 600));
+    // On a wide screen, stand two steps (160 each, for an eye height of 345) back from the tight fit, but never back through the door.
+    if (!narrow) about[2] = Math.min(about[2] + 320, -60);
     const education = wallStop(340, -405, Math.min(vw * .92 / 340, vh * .85 / 440));
     const turned = [150, -345, -850, 0, -90];
     const atTableTop = fromRoom2(0, TABLE_TOP - PERSPECTIVE * s / onScreen, TABLE_Z, 90);

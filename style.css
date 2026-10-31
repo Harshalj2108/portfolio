@@ -50,6 +50,10 @@ h2 { margin: 0 0 .5rem; font: 400 clamp(1.5rem, 2.5vw, 2.1rem)/1.15 "New Tegomin
 .page:focus-visible .sheet { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 #cat { position: fixed; right: clamp(10px, 2vw, 28px); bottom: clamp(6px, 1.4vw, 18px); z-index: 5; width: clamp(38px, 4.4vw, 62px); pointer-events: none; will-change: transform; }
+/* At rest the paw is hidden against the body; it pivots at the shoulder. */
+#catPaw { transform-origin: 24px 42px; }
+#catPaw.swat { animation: swat .36s ease-out; }
+@keyframes swat { 30% { transform: rotate(125deg); } 45% { transform: rotate(108deg); } }
 
 /* The 3D scene. Nothing on the camera's path may set overflow, filter or opacity, which would flatten it. */
 .on #stage { position: sticky; top: 0; height: 100vh; overflow: clip; perspective: 1000px; background: #BDB9B0; }
