@@ -12,6 +12,6 @@ skills-lock.json
 # OS metadata
 .DS_Store
 Thumbs.db
-
+CONTEXT.md
 # Logs
 *.log
