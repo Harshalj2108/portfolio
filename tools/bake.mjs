@@ -12,7 +12,9 @@ const page = await browser.newPage();
 for (const name of ['floor', 'floor-plain', 'ceiling', 'back', 'about-wall', 'side', 'door-wall', 'slide-near', 'slide-far', 'tabletop', 'tapestry-large', 'tapestry-small', 'door-wall-right', 'swing-door', 'skills-wall', 'frame', 'plaque', 'ceiling-wide', 'ceiling-tall', 'sign-tall', 'sign-wide']) {
   const svg = readFileSync(art(`${name}.svg`), 'utf8');
   const [, w, h] = svg.match(/viewBox="0 0 (\d+) (\d+)"/);
-  await page.setViewport({ width: +w, height: +h, deviceScaleFactor: 1.5 });
+  // Floors and ceilings are seen at a grazing angle, so the browser rasterises nearly the whole plane at once.
+  // At 1.5x that burst stalled the camera at each turn towards a new room; at 1x it doesn't.
+  await page.setViewport({ width: +w, height: +h, deviceScaleFactor: ['floor', 'floor-plain', 'ceiling'].includes(name) ? 1 : 1.5 });
   await page.setContent(`<!doctype html><body style="margin:0;background:transparent">${svg}`);
   // Transparent background, because the doorway and the tapestries' outlines need to see through.
   writeFileSync(art(`${name}.webp`), await page.screenshot({ type: 'webp', quality: 88, omitBackground: true }));

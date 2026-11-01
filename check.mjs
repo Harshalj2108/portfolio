@@ -15,7 +15,13 @@ if (process.argv.includes('--launch')) assert.ok(!html.includes('TODO(harshal)')
 
 // Harshal decided these stay off the site.
 for (const hidden of ['IronFlame', 'ProudBardeen', 'web2code']) assert.ok(!html.toLowerCase().includes(hidden.toLowerCase()), `${hidden} must not appear`);
-for (const [, url] of html.matchAll(/<a href="(http[^"]+)"/g)) assert.ok(url.startsWith('https://'), `not https: ${url}`);
+const links = [...html.matchAll(/<a\b[^>]*\bhref="(http[^"]+)"/g)].map(m => m[1]);
+for (const url of links) assert.ok(url.startsWith('https://'), `not https: ${url}`);
+for (const profile of ['leetcode.com', 'github.com/Harshalj2108', 'codeforces.com']) assert.ok(links.some(url => url.includes(profile)), `no link to ${profile}`);
+assert.ok(html.split('id="contact"')[1].includes('href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=harshalj.2108@gmail.com"'), 'the contact poster must open the Gmail composer');
+// Every floor plan stop must be a name on the camera's path.
+const scene = read('scene.js');
+for (const [, at] of html.matchAll(/data-at="(\w+)"/g)) assert.ok(scene.includes(`'${at}'`), `floor plan stop ${at} is not on the route`);
 
 // Harshal removed orange. Any colour with red far above blue and saturated is out; the cat's amber eyes are the one exception.
 const files = ['index.html', 'style.css', ...readdirSync(new URL('art/', import.meta.url)).filter(f => f.endsWith('.svg')).map(f => `art/${f}`)];

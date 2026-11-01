@@ -6,6 +6,13 @@ const ease = (t, a, b) => { const x = clamp((t - a) / (b - a), 0, 1); return x *
 
 const pointer = { x: -9999, y: -9999, sx: 0, sy: 0 };
 
+// Gmail's web composer is reported to land on the inbox on phones, so a touch screen hands off to the device's mail app instead.
+if (!matchMedia('(hover: hover)').matches) {
+  const mail = document.querySelector('#contact a');
+  mail.href = 'mailto:harshalj.2108@gmail.com';
+  mail.removeAttribute('target');
+}
+
 /* The cat turns its head to watch the cursor, and swats at it when it comes too close. */
 const cat = { tilt: 0, ex: 0, blink: 3 };
 function drawCat(t) {
@@ -42,8 +49,9 @@ else {
   const fromRoom3 = (x, y, z, pitch = 0, yaw = 0) => [-1800 + x, y, -1650 + z, pitch, yaw];
   const place = (id, s) => { $(id).style.transform = s; };
   const canHover = matchMedia('(hover: hover)').matches;
+  const pages = [...document.querySelectorAll('.page')], stops = [...document.querySelectorAll('#plan a')];
 
-  let keys = [], T = {}, sceneScroll = 1, lastWidth = 0, PERSPECTIVE = 1000;
+  let keys = [], T = {}, sceneScroll = 1, lastWidth = 0, PERSPECTIVE = 1000, dealt = [], dealtNow = -1, here = null;
 
   /* Everything that needs a layout read happens here, on load and resize, never inside a frame. */
   function measure() {
@@ -71,6 +79,9 @@ else {
     // The camera stops where the whole table just fits; an open page then shows at full size, up to the screen's limit.
     const onScreen = Math.min((vw - 16) / W, (vh - 64) / H, 1);
     table.style.setProperty('--read', Math.min(1, vw * .94 / 368, vh * .94 / 520) / onScreen);
+    // A page's 19.5px text under 9px on screen can't be read on the table, so scrolling brings each page up in turn.
+    dealt = onScreen * 19.5 < 9 ? pages : [];
+    $('read').textContent = dealt.length ? 'Keep scrolling to read each page.' : canHover ? 'Click a page to read it.' : 'Tap a page to read it.';
     const fit = Math.min(vw / 720, vh / 1000, 1.1);
     // On a tall screen the gate moves up, so the view fills with gravel rather than empty sky.
     const y0 = Math.max(-430, -960 + vh / (2 * fit));
@@ -111,7 +122,7 @@ else {
       [.45, fromRoom2(0, -360, -330, 12), 'inside'],
       [.55, fromRoom2(0, Math.max(-700, -110 - PERSPECTIVE * s * 1.25), -850, 62), 'rise'],
       [.55, atTableTop, 'table', true],
-      [.7, atTableTop, 'tableEnd', true],
+      [.7 + dealt.length * .5, atTableTop, 'tableEnd', true],
       [.65, fromRoom2(0, -345, TABLE_Z, 0), 'upright', true],
       [.7, facingDoor, 'facing', true],
       [.6, facingDoor, 'swung', true],
@@ -122,12 +133,15 @@ else {
       [.8, profilesStop, 'profiles', true],
       [.5, profilesStop, 'profilesEnd', true],
       [.95, fromRoom3(0, -798 + toCeiling, -850, -90, -90), 'contact', true],
+      // Room to rest, because a phone's collapsing address bar can stop the scroll just short of the end.
+      [.3, fromRoom3(0, -798 + toCeiling, -850, -90, -90), 'contactEnd', true],
     ];
     const total = path.reduce((sum, row) => sum + row[0], 0);
     let at = 0;
+    T = {};
     keys = path.map(([dist, pos, name, rest]) => { at += dist / total; T[name] = at; return [at, ...pos, rest]; });
     // The camera is still between these pairs, so the words on the wall can render at their true size.
-    T.rests = [[T.read, T.readAbout], ...(narrow ? [[T.edu, T.eduEnd]] : []), [narrow ? T.skillsFar : T.skills, T.skillsEnd], [T.profiles, T.profilesEnd], [1, 1]];
+    T.rests = [[T.read, T.readAbout], ...(narrow ? [[T.edu, T.eduEnd]] : []), [narrow ? T.skillsFar : T.skills, T.skillsEnd], [T.profiles, T.profilesEnd], [T.contact, 1]];
     T.readEnd = narrow ? T.eduEnd : T.readAbout;
     sceneScroll = Math.round(vh * total);
     $('track').style.height = sceneScroll + vh + 'px';
@@ -194,6 +208,10 @@ else {
     // Once the camera stops, the table can re-render its text at the size it's actually shown.
     const stopped = prog >= T.table && prog <= T.tableEnd;
     if (stopped !== arrived) $('table').classList.toggle('arrived', arrived = stopped);
+    const dealing = dealt.length && stopped ? Math.floor((prog - T.table) / (T.tableEnd - T.table) * (dealt.length + 1) - .5) : -1;
+    if (dealing !== dealtNow) { dealtNow = dealing; setOpen(dealt[dealing] ?? null); }
+    const reached = stops.findLast(a => prog >= T[a.dataset.at]);
+    if (reached !== here) { here?.removeAttribute('aria-current'); reached?.setAttribute('aria-current', 'location'); here = reached; }
     // A resting cursor must not set off a page's hover while the table moves past it mid-flight.
     const near = prog > T.table - .01 && prog < T.tableEnd + .01;
     if (near !== atTable) $('table').classList.toggle('at', atTable = near);
@@ -239,7 +257,11 @@ else {
   // Keyboard: tabbing onto a page travels to the table and opens that page.
   addEventListener('focusin', e => {
     const page = e.target.closest?.('.page');
-    if (page && e.target.matches(':focus-visible')) { scrollTo(0, Math.ceil(T.table * sceneScroll)); setOpen(page); }
+    if (page && e.target.matches(':focus-visible')) {
+      const slot = dealt.length ? (T.tableEnd - T.table) * (dealt.indexOf(page) + 1) / (dealt.length + 1) : 0;
+      scrollTo(0, Math.ceil((T.table + slot) * sceneScroll));
+      setOpen(page);
+    }
     else if (!page) setOpen(null);
     if (e.target.closest?.('#about') && e.target.matches(':focus-visible')) scrollTo(0, T.read * sceneScroll);
     if (e.target.closest?.('#profiles') && e.target.matches(':focus-visible')) scrollTo(0, Math.ceil(T.profiles * sceneScroll));
@@ -250,12 +272,29 @@ else {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.page')) { e.preventDefault(); setOpen(e.target === openPage ? null : e.target); }
   });
 
+  // The floor plan fades the view out, lands on the stop, and fades back in, rather than racing through every room.
+  $('plan').addEventListener('click', e => {
+    const stop = e.target.closest('a');
+    if (!stop) return;
+    e.preventDefault();
+    $('plan').hidePopover?.();
+    document.documentElement.classList.add('jumping');
+    setTimeout(async () => {
+      const y = Math.ceil((T[stop.dataset.at] ?? T.read) * sceneScroll);
+      scrollTo(0, y);
+      smooth = y;
+      dirty = true;
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      document.documentElement.classList.remove('jumping');
+    }, 220);
+  });
+
   addEventListener('resize', () => {
     // Phone address bars resize the window on every scroll; only a real width change matters.
     if (canHover || document.documentElement.clientWidth !== lastWidth) measure();
   });
 
-  if (!canHover) $('read').textContent = 'Tap a page to read it.';
   measure();
   place('hanging1', 'translate3d(520px, -800px, -560px)');
   place('hanging', 'translate3d(-560px, -800px, -760px)');

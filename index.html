@@ -15,6 +15,28 @@
 </head>
 <body>
 
+<button id="plan-button" popovertarget="plan"><svg viewBox="0 0 28 28" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 1h13v14H1zM2 15h13v12H2zM15 14h12v13H15z"/></svg>Floor plan</button>
+<!-- The house's real layout, seen from above. Each stop is a link to where the route reaches it. -->
+<nav id="plan" popover aria-label="Rooms">
+  <svg viewBox="0 0 296 324">
+    <a href="#front" data-at="gate"><rect x="156" y="276" width="128" height="44"/><text x="220" y="298">Gate</text></a>
+    <a href="#about" data-at="read"><rect x="156" y="140" width="52" height="46"/><text x="182" y="163">About</text></a>
+    <a href="#education" data-at="edu"><rect x="208" y="140" width="76" height="46"/><text x="246" y="163">Education</text></a>
+    <a href="#table" data-at="table"><rect x="20" y="144" width="136" height="128"/><text x="88" y="252">Projects</text></a>
+    <a href="#skills" data-at="skills"><rect x="12" y="8" width="128" height="46"/><text x="76" y="31">Skills</text></a>
+    <a href="#profiles" data-at="profiles"><rect x="12" y="54" width="66" height="90"/><text x="45" y="96">Profiles</text></a>
+    <a href="#contact" data-at="contact"><rect x="78" y="54" width="62" height="90"/><text x="109" y="96">Contact</text></a>
+    <g class="drawn" aria-hidden="true">
+      <path class="route" d="M220 276V208H76V112"/>
+      <rect class="desk" x="54" y="186" width="44" height="44"/>
+      <path class="wall" d="M12 8H140V144H12ZM20 144H156V272H20ZM156 140H284V276H156Z"/>
+      <path class="door" d="M60 144H92M156 180V236M196 276H244"/>
+    </g>
+    <text class="note" x="156" y="30">Go straight to</text>
+    <text class="note" x="156" y="50">a room</text>
+  </svg>
+</nav>
+
 <div id="cover"></div>
 <div id="track">
 <div id="stage">
@@ -44,7 +66,7 @@
   <section class="one tapestry" id="about">
     <img src="art/tapestry-large.webp" alt="">
     <h2>About me</h2>
-    <p>I study Civil and Infrastructure Engineering at IIT Jodhpur and build software: an AI astrology platform, a synthetic market simulator and a terminal AI workstation in Rust. My pull requests have been merged into shadPS4 and Apache arrow-rs.</p>
+    <p>I’m Harshal, a third-year B.Tech student at IIT Jodhpur with a strong interest in software engineering, artificial intelligence, and data-driven systems. I enjoy building things from the ground up—from full-stack applications and AI-powered platforms to trading systems and developer tools.</p>
     <a href="https://github.com/Harshalj2108">See my GitHub</a>
   </section>
   <section class="one tapestry" id="education">
@@ -191,8 +213,7 @@
     <section class="tapestry" id="contact">
       <picture><source media="(max-width: 899px)" srcset="art/ceiling-tall.webp"><img src="art/ceiling-wide.webp" alt=""></picture>
       <h2>Contact</h2>
-      <p>GitHub: <a href="https://github.com/Harshalj2108">github.com/Harshalj2108</a></p>
-      <p>TODO(harshal): your email and anything else people should use to reach you.</p>
+      <p><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=harshalj.2108@gmail.com" target="_blank" rel="noopener">harshalj.2108@gmail.com</a></p>
     </section>
   </div>
 

@@ -134,8 +134,9 @@ h2 { margin: 0 0 .5rem; font: 400 clamp(1.5rem, 2.5vw, 2.1rem)/1.15 "New Tegomin
 /* Reading size: the page comes to the middle of the screen, which is the middle of the table. */
 .on .page.open { z-index: 60; cursor: default; }
 .on .page.open .sheet { rotate: 0deg; translate: calc(660px - 7px - 184px - var(--left)) calc(660px - 7px - 260px - var(--top)); scale: var(--read); }
-.on #dim { display: block; position: absolute; inset: -1500px; z-index: 50; background: var(--ink); opacity: 0; pointer-events: none; transition: opacity .45s ease; }
-.on .reading #dim { opacity: .5; }
+/* Unpainted until a page opens: painted, even at opacity 0, this oversized box stretches the table's layer to 4320px and stalls the first turn towards it. */
+.on #dim { display: block; position: absolute; inset: -1500px; z-index: 50; background: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .45s ease, visibility 0s .45s; }
+.on .reading #dim { opacity: .5; visibility: visible; transition: opacity .45s ease; }
 .on .reading .page:not(.open) { pointer-events: none; }
 .on #read { display: block; position: absolute; left: 0; right: 0; bottom: clamp(.5rem, 1.6vh, 1rem); width: fit-content; max-width: calc(100% - 8rem); margin: 0 auto; padding: .2rem .8rem; background: var(--off); border: 2px solid var(--ink); text-align: center; font-weight: 700; opacity: 0; will-change: opacity; pointer-events: none; }
 .on #table:not(.at) { pointer-events: none; }
@@ -144,11 +145,37 @@ h2 { margin: 0 0 .5rem; font: 400 clamp(1.5rem, 2.5vw, 2.1rem)/1.15 "New Tegomin
 .on #cover { position: fixed; inset: 0; z-index: 4; background: var(--egg); opacity: .995; pointer-events: none; transition: opacity .7s ease; }
 .on.ready #cover { opacity: 0; }
 
+/* The floor plan: a small button, then the house from above, with each stop a link. Only the walk needs it. */
+#plan-button { display: none; }
+.on #plan-button { position: fixed; left: 10px; top: 10px; z-index: 6; display: flex; align-items: center; gap: .45rem; min-height: 44px; padding: 0 .75rem 0 .5rem; background: var(--off); border: 2px solid var(--ink); color: var(--ink); font: 700 .95rem/1 "Shippori Mincho", serif; cursor: pointer; }
+.on #plan-button:hover { background: var(--beige); }
+.on:not(.ready) #plan-button { visibility: hidden; }
+#plan { position: fixed; inset: 62px auto auto 10px; width: min(296px, 100vw - 20px); max-height: calc(100dvh - 72px); margin: 0; padding: 0; overflow: auto; background: var(--off); border: 3px solid var(--ink); color: var(--ink); }
+#plan svg { display: block; width: 100%; height: auto; }
+#plan text { fill: var(--ink); font: 400 14px "New Tegomin", serif; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+#plan .note { font: 500 14px "Shippori Mincho", serif; text-anchor: start; }
+#plan a rect { fill: transparent; }
+#plan a:is(:hover, :focus-visible) rect { fill: var(--beige); }
+#plan a:focus-visible { outline: 3px solid var(--wood); outline-offset: -5px; }
+#plan a[aria-current] rect { fill: var(--ink); }
+#plan a[aria-current] text { fill: var(--off); }
+#plan .drawn { pointer-events: none; fill: none; stroke: var(--ink); }
+#plan .route { stroke: var(--grey); stroke-width: 2; stroke-dasharray: 2 6; stroke-linecap: round; }
+#plan .desk { fill: var(--wood); stroke-width: 2; }
+#plan .wall { stroke-width: 3; stroke-linejoin: miter; }
+#plan .door { stroke: var(--off); stroke-width: 5; }
+/* Stays almost opaque for the same reason as at load: the browser keeps preparing what is behind it. */
+.on.ready.jumping #cover { opacity: .995; transition-duration: .2s; }
+
 /* The contact panel on the ceiling. scene.js places it, because its size depends on the screen. */
+#contact { position: relative; }
+/* The whole panel is the link to the email composer. */
+#contact a::after { content: ""; position: absolute; inset: 0; }
+#contact:hover a { color: var(--ink); text-decoration-thickness: 3px; }
 .on #contact { width: 720px; height: 420px; padding: 74px 88px 0; font-size: 26px; line-height: 1.38; }
 .on #contact h2 { font-size: 58px; margin-bottom: .22em; }
 .on #contact:not(.sharp) { pointer-events: none; }
-@media (max-width: 899px) { .on #contact { width: 420px; height: 560px; padding: 76px 62px 0; font-size: 23px; } .on #contact h2 { font-size: 50px; } .on #contact a { white-space: nowrap; font-size: .94em; } }
+@media (max-width: 899px) { .on #contact { width: 420px; height: 560px; padding: 76px 54px 0 70px; font-size: 23px; } .on #contact h2 { font-size: 50px; } .on #contact a { white-space: nowrap; font-size: .94em; } }
 
 /* The profiles wall: three hanging signboards under a plaque. On a narrow screen they stack as wide, short boards. */
 #profiles { width: min(40rem, 100vw - 16px); margin: 0 auto 2rem; text-align: center; }
