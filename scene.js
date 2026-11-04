@@ -15,8 +15,11 @@ if (!matchMedia('(hover: hover)').matches) {
 
 /* The cat turns its head to watch the cursor, and swats at it when it comes too close. */
 const cat = { tilt: 0, ex: 0, blink: 3 };
+// The cat is fixed to the corner, so its box only changes with the window. Reading it every frame forced a style flush of the whole scene.
+let catBox = $('cat').getBoundingClientRect();
+addEventListener('resize', () => { catBox = $('cat').getBoundingClientRect(); });
 function drawCat(t) {
-  const r = $('cat').getBoundingClientRect();
+  const r = catBox;
   const dx = pointer.x > -9000 ? pointer.x - (r.left + r.width / 2) : 0;
   const dy = pointer.x > -9000 ? pointer.y - (r.top + r.height / 2) : 0;
   const k = still ? 1 : .08;
@@ -31,7 +34,7 @@ function drawCat(t) {
 function track(e) {
   pointer.x = e.clientX; pointer.y = e.clientY;
   if (still) return drawCat(performance.now() / 1000);
-  const r = $('cat').getBoundingClientRect();
+  const r = catBox;
   if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) $('catPaw').classList.add('swat');
 }
 // Clearing the class lets a cursor that keeps moving on the cat set off another swat.
@@ -170,7 +173,7 @@ else {
   let gateShown = true, oneShown = true, roomShown = true, twoShown = true, threeShown = true, sharp = false;
   const show = (els, on) => { for (const el of els) el.style.visibility = on ? '' : 'hidden'; };
 
-  let dirty = true, smooth = scrollY, lastFrame = performance.now();
+  let dirty = true, smooth = scrollY, lastFrame = performance.now(), tick = 0;
   const cam = [0, 0, 0, 0, 0];
 
   function draw() {
@@ -239,8 +242,11 @@ else {
     }
     if (dirty) { draw(); dirty = false; }
     const swing = (Math.sin(t * .8) * 1.1 + pointer.sx * 1.4).toFixed(2);
-    if (oneShown) $('hanging1').style.transform = `translate3d(520px, -800px, -560px) rotateZ(${swing}deg)`;
-    else if (roomShown) $('hanging').style.transform = `translate3d(-560px, -800px, -760px) rotateZ(${swing}deg)`;
+    // A slow sway doesn't need a touch screen's every frame; every other one keeps the compositor and battery calmer.
+    if (canHover || ++tick % 2) {
+      if (oneShown) $('hanging1').style.transform = `translate3d(520px, -800px, -560px) rotateZ(${swing}deg)`;
+      else if (roomShown) $('hanging').style.transform = `translate3d(-560px, -800px, -760px) rotateZ(${swing}deg)`;
+    }
     drawCat(t);
     requestAnimationFrame(frame);
   }

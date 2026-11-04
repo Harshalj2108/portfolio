@@ -9,14 +9,18 @@ const art = name => new URL(`../art/${name}`, import.meta.url);
 const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new' });
 const page = await browser.newPage();
 
-for (const name of ['floor', 'floor-plain', 'ceiling', 'back', 'about-wall', 'side', 'door-wall', 'slide-near', 'slide-far', 'tabletop', 'tapestry-large', 'tapestry-small', 'door-wall-right', 'swing-door', 'skills-wall', 'frame', 'plaque', 'ceiling-wide', 'ceiling-tall', 'sign-tall', 'sign-wide']) {
+// Phones get 1x walls and table instead of 1.5x ("-lite", chosen by srcset sizes in index.html), so far less texture memory is held.
+const LITE = ['about-wall', 'back', 'side', 'door-wall', 'door-wall-right', 'skills-wall', 'tabletop'];
+// The gate used to be a live 3200x1700 vector, redrawn by the browser; as an image it is uploaded once.
+const jobs = [...['floor', 'floor-plain', 'ceiling', 'back', 'about-wall', 'side', 'door-wall', 'slide-near', 'slide-far', 'tabletop', 'tapestry-large', 'tapestry-small', 'door-wall-right', 'swing-door', 'skills-wall', 'frame', 'plaque', 'ceiling-wide', 'ceiling-tall', 'sign-tall', 'sign-wide', 'gate'].map(n => [n, n, 0]), ...LITE.map(n => [n, `${n}-lite`, 1])];
+for (const [name, out, lite] of jobs) {
   const svg = readFileSync(art(`${name}.svg`), 'utf8');
   const [, w, h] = svg.match(/viewBox="0 0 (\d+) (\d+)"/);
   // Floors and ceilings are seen at a grazing angle, so the browser rasterises nearly the whole plane at once.
   // At 1.5x that burst stalled the camera at each turn towards a new room; at 1x it doesn't.
-  await page.setViewport({ width: +w, height: +h, deviceScaleFactor: ['floor', 'floor-plain', 'ceiling'].includes(name) ? 1 : 1.5 });
+  await page.setViewport({ width: +w, height: +h, deviceScaleFactor: lite || ['floor', 'floor-plain', 'ceiling', 'gate'].includes(name) ? 1 : 1.5 });
   await page.setContent(`<!doctype html><body style="margin:0;background:transparent">${svg}`);
   // Transparent background, because the doorway and the tapestries' outlines need to see through.
-  writeFileSync(art(`${name}.webp`), await page.screenshot({ type: 'webp', quality: 88, omitBackground: true }));
+  writeFileSync(art(`${out}.webp`), await page.screenshot({ type: 'webp', quality: 88, omitBackground: true }));
 }
 await browser.close();
